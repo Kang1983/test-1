@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coach Login - Recruit Database</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="medal-icon">🔐</div>
+    <h1>Coach Login</h1>
+    <p class="subtitle">Access the athlete recruit database.</p>
+
+    <div id="error" class="error" style="display:none;"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" required placeholder="coach" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-gold">Log In</button>
+    </form>
+
+    <p style="text-align:center; margin-top:20px; font-size:0.9rem; color:#666;">
+      Demo credentials: <strong>coach</strong> / <strong>medal2026</strong>
+    </p>
+
+    <div class="nav" style="margin-top:15px;">
+      <a href="index.html">← Back to Athlete Registration</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (isCoachLoggedIn()) {
+      window.location.href = 'coaches.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const success = await apiCoachLogin(username, password);
+      if (success) {
+        sessionStorage.setItem('coachLoggedIn', 'true');
+        window.location.href = 'coaches.html';
+      } else {
+        document.getElementById('error').textContent = 'Invalid username or password.';
+        document.getElementById('error').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

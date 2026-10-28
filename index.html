@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medal Registration - College Recruiting</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="medal-icon">🏅</div>
+    <h1>Medal Won!</h1>
+    <p class="subtitle">Register this achievement so college track coaches can discover you.</p>
+
+    <div id="medal-form-section">
+      <h2 style="text-align:center; color:#1a5f7a; margin-bottom:20px;">Medal Details</h2>
+      <form id="medalForm">
+        <div class="form-group">
+          <label for="event">Event *</label>
+          <input type="text" id="event" name="event" placeholder="e.g. 100m Dash, Long Jump, 800m" required>
+        </div>
+        <div class="form-group">
+          <label for="date">Date *</label>
+          <input type="date" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label for="performance">Performance Time / Mark *</label>
+          <input type="text" id="performance" name="performance" placeholder="e.g. 11.45, 20' 6", 2:05.3" required>
+        </div>
+        <div class="form-group">
+          <label for="meet">Meet Name <span class="optional">(optional)</span></label>
+          <input type="text" id="meet" name="meet" placeholder="e.g. Local City Track Meet">
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-gold" id="registerNew">New Athlete - Register & Add Medal</button>
+          <button type="button" class="btn" id="signInExisting">Already Registered - Sign In to Add Medal</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="nav" style="margin-top:30px;">
+      <a href="coaches-login.html">College Coaches Database →</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('registerNew').addEventListener('click', function() {
+      const form = document.getElementById('medalForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const medal = {
+        event: document.getElementById('event').value.trim(),
+        date: document.getElementById('date').value,
+        performance: document.getElementById('performance').value.trim(),
+        meet: document.getElementById('meet').value.trim()
+      };
+      saveMedalToSession(medal);
+      window.location.href = 'register.html';
+    });
+
+    document.getElementById('signInExisting').addEventListener('click', function() {
+      const form = document.getElementById('medalForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const medal = {
+        event: document.getElementById('event').value.trim(),
+        date: document.getElementById('date').value,
+        performance: document.getElementById('performance').value.trim(),
+        meet: document.getElementById('meet').value.trim()
+      };
+      saveMedalToSession(medal);
+      window.location.href = 'signin.html';
+    });
+
+    // Set default date to today
+    document.getElementById('date').valueAsDate = new Date();
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+/* Medal Recruit App Styles - Triple Crown Theme */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --primary: #000000;
+  --secondary: #333333;
+  --accent: #ffffff;
+  --bg: #ffffff;
+  --card: #ffffff;
+  --text: #000000;
+  --border: #000000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: #ffffff url('background.png') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  padding: 30px;
+  border: 3px solid #000000;
+}
+
+h1, h2, h3 {
+  font-family: 'Oswald', 'Impact', sans-serif;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.medal-icon {
+  text-align: center;
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #000;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #000;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  transition: border 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  background: #000000;
+  color: white;
+  border: 2px solid #000;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  margin: 8px 4px;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.btn:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #333;
+  border-color: #333;
+}
+
+.btn-gold {
+  background: #000000;
+  color: white;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.optional {
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: normal;
+  text-transform: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.id-display {
+  background: #f0f0f0;
+  border: 3px solid #000;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: #000;
+  font-family: 'Oswald', sans-serif;
+}
+
+.success {
+  background: #e8f5e9;
+  color: #1b5e20;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 2px solid #000;
+}
+
+.error {
+  background: #ffebee;
+  color: #b71c1c;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 2px solid #000;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #000;
+}
+
+th {
+  background: #000;
+  color: white;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tr:hover {
+  background: #f5f5f5;
+}
+
+.nav {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.nav a {
+  margin: 0 10px;
+  color: #000;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.photo-preview {
+  max-width: 150px;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 2px solid #000;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+  h1 {
+    font-size: 2.2rem;
+  }
+  body {
+    background-attachment: scroll;
+  }
+}

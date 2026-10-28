@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Athlete</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="medal-icon">📝</div>
+    <h1>Register Your Profile</h1>
+    <p class="subtitle">Create your athlete profile and add this medal. You'll receive a unique ID to sign in later.</p>
+
+    <div id="pendingMedalInfo" style="background:#e8f4f8; padding:15px; border-radius:8px; margin-bottom:20px; display:none;">
+      <strong>Adding Medal:</strong> <span id="medalSummary"></span>
+    </div>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" required placeholder="First and Last Name">
+      </div>
+      <div class="form-group">
+        <label for="grade">Grade *</label>
+        <select id="grade" required>
+          <option value="">Select Grade</option>
+          <option value="9th">9th Grade</option>
+          <option value="10th">10th Grade</option>
+          <option value="11th">11th Grade</option>
+          <option value="12th">12th Grade</option>
+          <option value="College">College / Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="school">School or Team *</label>
+        <input type="text" id="school" required placeholder="High School or Club Team Name">
+      </div>
+      <div class="form-group">
+        <label for="aau">AAU Number <span class="optional">(optional)</span></label>
+        <input type="text" id="aau" placeholder="AAU membership number">
+      </div>
+      <div class="form-group">
+        <label for="usatf">USATF Number <span class="optional">(optional)</span></label>
+        <input type="text" id="usatf" placeholder="USATF membership number">
+      </div>
+      <div class="form-group">
+        <label for="gpa">GPA <span class="optional">(optional)</span></label>
+        <input type="text" id="gpa" placeholder="e.g. 3.8">
+      </div>
+      <div class="form-group">
+        <label for="photo">Photo <span class="optional">(optional, 1 photo)</span></label>
+        <input type="file" id="photo" accept="image/*">
+        <img id="photoPreview" class="photo-preview" style="display:none;">
+      </div>
+      <div class="form-group">
+        <label for="pbs">Personal Best Performances <span class="optional">(optional, one per line: Event - Mark)</span></label>
+        <textarea id="pbs" rows="3" placeholder="e.g.&#10;100m - 11.2&#10;Long Jump - 22' 1""></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-gold">Register & Get My Athlete ID</button>
+    </form>
+
+    <div id="result" style="display:none; margin-top:30px;">
+      <div class="success">Registration Successful!</div>
+      <div class="id-display" id="athleteIDDisplay"></div>
+      <p style="text-align:center; margin-bottom:20px;">Save this ID! Use it to sign in and add future medals.</p>
+      <a href="profile.html" class="btn" id="goToProfile">View My Profile</a>
+      <a href="index.html" class="btn btn-secondary">Back to Home</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const pending = getPendingMedal();
+    if (pending) {
+      document.getElementById('pendingMedalInfo').style.display = 'block';
+      document.getElementById('medalSummary').textContent = 
+        `${pending.event} on ${pending.date}: ${pending.performance}${pending.meet ? ' at ' + pending.meet : ''}`;
+    }
+
+    // Photo preview
+    document.getElementById('photo').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const img = document.getElementById('photoPreview');
+          img.src = ev.target.result;
+          img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const photoInput = document.getElementById('photo');
+      let photoData = null;
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        grade: document.getElementById('grade').value,
+        school: document.getElementById('school').value.trim(),
+        aau: document.getElementById('aau').value.trim() || null,
+        usatf: document.getElementById('usatf').value.trim() || null,
+        gpa: document.getElementById('gpa').value.trim() || null,
+        personalBests: document.getElementById('pbs').value.trim().split('\n').filter(l => l.trim()).map(l => l.trim()),
+        medal: pending || null
+      };
+
+      // Handle photo
+      if (photoInput.files[0]) {
+        photoData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(photoInput.files[0]);
+        });
+        payload.photo = photoData;
+      }
+
+      try {
+        const result = await apiRegister(payload);
+        if (result.success) {
+          clearPendingMedal();
+          showSuccess(result.id);
+        } else {
+          alert('Registration failed');
+        }
+      } catch (err) {
+        alert('Error connecting to server');
+        console.error(err);
+      }
+    });
+
+    function showSuccess(id) {
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('pendingMedalInfo').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('athleteIDDisplay').textContent = id;
+      sessionStorage.setItem('currentAthleteID', id);
+      document.getElementById('goToProfile').href = `profile.html?id=${id}`;
+    }
+  </script>
+</body>
+</html>

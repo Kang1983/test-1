@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Athlete Profile</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="medal-icon">👤</div>
+    <h1>My Profile</h1>
+    <div id="content">
+      <p style="text-align:center;">Loading...</p>
+    </div>
+    <div class="nav" style="margin-top:20px;">
+      <a href="index.html">Register Another Medal</a> | 
+      <a href="coaches-login.html">View Coaches Database</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let athleteID = urlParams.get('id') || sessionStorage.getItem('currentAthleteID');
+
+    async function renderProfile() {
+      if (!athleteID) {
+        document.getElementById('content').innerHTML = '<div class="error">No athlete signed in. <a href="signin.html">Sign In</a></div>';
+        return;
+      }
+
+      const athlete = await apiGetAthlete(athleteID);
+      if (!athlete) {
+        document.getElementById('content').innerHTML = '<div class="error">Athlete not found. <a href="signin.html">Sign In</a></div>';
+        return;
+      }
+
+      let html = `
+        <div style="text-align:center; margin-bottom:20px;">
+          ${athlete.photo ? `<img src="${athlete.photo}" class="photo-preview" style="max-width:180px; border-radius:50%;">` : '<div style="font-size:3rem;">🏃</div>'}
+          <h2 style="margin-top:10px;">${athlete.name}</h2>
+          <p><strong>ID:</strong> ${athlete.id}</p>
+          <p>${athlete.grade} • ${athlete.school}</p>
+          ${athlete.gpa ? `<p>GPA: ${athlete.gpa}</p>` : ''}
+          ${athlete.aau ? `<p>AAU: ${athlete.aau}</p>` : ''}
+          ${athlete.usatf ? `<p>USATF: ${athlete.usatf}</p>` : ''}
+        </div>
+
+        <h3 style="color:#000; margin-top:25px;">Registered Medals</h3>
+      `;
+
+      if (athlete.medals && athlete.medals.length > 0) {
+        html += '<table><thead><tr><th>Event</th><th>Date</th><th>Performance</th><th>Meet</th></tr></thead><tbody>';
+        athlete.medals.forEach(m => {
+          html += `<tr><td>${m.event}</td><td>${m.date}</td><td>${m.performance}</td><td>${m.meet || '-'}</td></tr>`;
+        });
+        html += '</tbody></table>';
+      } else {
+        html += '<p>No medals registered yet.</p>';
+      }
+
+      html += `
+        <h3 style="color:#000; margin-top:25px;">Personal Bests</h3>
+        ${athlete.personalBests && athlete.personalBests.length ? 
+          '<ul style="margin-left:20px;">' + athlete.personalBests.map(pb => `<li>${pb}</li>`).join('') + '</ul>' 
+          : '<p>None listed.</p>'}
+      `;
+
+      document.getElementById('content').innerHTML = html;
+    }
+
+    renderProfile();
+  </script>
+</body>
+</html>

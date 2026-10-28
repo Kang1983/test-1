@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Coaches - Athlete Database</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .search-bar {
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      max-width: 400px;
+      margin: 0 auto;
+      display: block;
+      border: 2px solid #000;
+    }
+    .athlete-card {
+      border: 2px solid #000;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.95);
+    }
+    .athlete-card h3 {
+      color: #000;
+      margin-bottom: 5px;
+      font-family: 'Oswald', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="medal-icon">🎓</div>
+    <h1>Recruit Database</h1>
+    <p class="subtitle">College coaches: Discover registered athletes and their medal performances.</p>
+
+    <div style="text-align:right; margin-bottom:10px;">
+      <button id="logoutBtn" class="btn" style="width:auto; padding:8px 16px; font-size:0.9rem; background:#6c757d;">Log Out</button>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search by name, school, or event...">
+    </div>
+
+    <div id="athletesList"></div>
+
+    <div class="nav" style="margin-top:20px;">
+      <a href="index.html">← Athlete Registration</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Protect the page — redirect to login if not authenticated
+    if (!isCoachLoggedIn()) {
+      window.location.href = 'coaches-login.html';
+    }
+
+    async function renderAthletes(filter = '') {
+      const athletes = await apiGetAllAthletes();
+      const list = document.getElementById('athletesList');
+      
+      if (!athletes || athletes.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#666;">No athletes registered yet. Be the first!</p>';
+        return;
+      }
+
+      const filtered = athletes.filter(a => {
+        const searchStr = `${a.name} ${a.school} ${a.grade} ${(a.medals||[]).map(m=>m.event).join(' ')} ${(a.personalBests||[]).join(' ')}`.toLowerCase();
+        return searchStr.includes(filter.toLowerCase());
+      });
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<p style="text-align:center;">No matches found.</p>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(a => {
+        html += `
+          <div class="athlete-card">
+            <div style="display:flex; gap:15px; align-items:center;">
+              ${a.photo ? `<img src="${a.photo}" style="width:60px; height:60px; object-fit:cover; border-radius:50%; border:2px solid #000;">` : '<div style="font-size:2rem;">🏃</div>'}
+              <div>
+                <h3>${a.name}</h3>
+                <p>${a.grade} • ${a.school}</p>
+                ${a.gpa ? `<p>GPA: ${a.gpa}</p>` : ''}
+              </div>
+            </div>
+            ${a.medals && a.medals.length ? `
+              <p style="margin-top:10px;"><strong>Medals:</strong></p>
+              <ul style="margin-left:20px; font-size:0.95rem;">
+                ${a.medals.map(m => `<li>${m.event} (${m.date}): ${m.performance}${m.meet ? ' - ' + m.meet : ''}</li>`).join('')}
+              </ul>
+            ` : ''}
+            ${a.personalBests && a.personalBests.length ? `
+              <p style="margin-top:8px;"><strong>Personal Bests:</strong> ${a.personalBests.join(' | ')}</p>
+            ` : ''}
+            ${a.aau || a.usatf ? `<p style="font-size:0.9rem; color:#666; margin-top:5px;">${a.aau ? 'AAU: '+a.aau : ''} ${a.usatf ? 'USATF: '+a.usatf : ''}</p>` : ''}
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+    }
+
+    document.getElementById('search').addEventListener('input', function(e) {
+      renderAthletes(e.target.value);
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      coachLogout();
+      window.location.href = 'coaches-login.html';
+    });
+
+    renderAthletes();
+  </script>
+</body>
+</html>

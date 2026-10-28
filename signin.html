@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - Athlete</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="medal-icon">🔐</div>
+    <h1>Sign In</h1>
+    <p class="subtitle">Enter your Athlete ID to add this medal to your profile.</p>
+
+    <div id="pendingMedalInfo" style="background:#e8f4f8; padding:15px; border-radius:8px; margin-bottom:20px; display:none;">
+      <strong>Adding Medal:</strong> <span id="medalSummary"></span>
+    </div>
+
+    <div id="error" class="error" style="display:none;"></div>
+
+    <form id="signinForm">
+      <div class="form-group">
+        <label for="athleteID">Athlete ID *</label>
+        <input type="text" id="athleteID" required placeholder="e.g. AB12CD34" style="text-transform:uppercase; letter-spacing:2px; font-size:1.2rem; text-align:center;">
+      </div>
+      <button type="submit" class="btn btn-gold">Sign In & Add Medal</button>
+    </form>
+
+    <div style="text-align:center; margin-top:20px;">
+      <a href="register.html" style="color:#1a5f7a;">Don't have an ID? Register as New Athlete</a>
+    </div>
+    <div class="nav" style="margin-top:15px;">
+      <a href="index.html">← Back to Medal Registration</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const pending = getPendingMedal();
+    if (pending) {
+      document.getElementById('pendingMedalInfo').style.display = 'block';
+      document.getElementById('medalSummary').textContent = 
+        `${pending.event} on ${pending.date}: ${pending.performance}${pending.meet ? ' at ' + pending.meet : ''}`;
+    }
+
+    document.getElementById('signinForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('athleteID').value.trim().toUpperCase();
+      
+      const athlete = await apiGetAthlete(id);
+      if (!athlete) {
+        document.getElementById('error').textContent = 'Athlete ID not found. Please check and try again, or register as a new athlete.';
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+
+      // Add the pending medal if exists
+      if (pending) {
+        try {
+          await apiAddMedal(id, pending);
+          clearPendingMedal();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      sessionStorage.setItem('currentAthleteID', id);
+      window.location.href = `profile.html?id=${id}`;
+    });
+  </script>
+</body>
+</html>
